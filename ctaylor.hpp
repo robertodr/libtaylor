@@ -65,38 +65,38 @@ constexpr POW2(int N) noexcept { return (1 << N); }
  */
 template <typename T, int Nvar> struct ctaylor_rec {
   // Add x*y to dst
-  static void mul(T * dst, const T * x, const T * y) {
+  void mul(T * dst, const T * x, const T * y) {
     ctaylor_rec<T, Nvar - 1>::mul(dst, x, y);
     ctaylor_rec<T, Nvar - 1>::mul(dst + POW2(Nvar - 1), x + POW2(Nvar - 1), y);
     ctaylor_rec<T, Nvar - 1>::mul(dst + POW2(Nvar - 1), x, y + POW2(Nvar - 1));
   }
   // Add set dst = x*y to dst
-  static void mul_set(T * dst, const T * x, const T * y) {
+  void mul_set(T * dst, const T * x, const T * y) {
     ctaylor_rec<T, Nvar - 1>::mul_set(dst, x, y);
     ctaylor_rec<T, Nvar - 1>::mul_set(dst + POW2(Nvar - 1), x + POW2(Nvar - 1), y);
     ctaylor_rec<T, Nvar - 1>::mul(dst + POW2(Nvar - 1), x, y + POW2(Nvar - 1));
   }
   // dst = dst * y
-  static void multo(T * dst, const T * y) {
+  void multo(T * dst, const T * y) {
     ctaylor_rec<T, Nvar - 1>::multo(dst + POW2(Nvar - 1), y);
     ctaylor_rec<T, Nvar - 1>::mul(dst + POW2(Nvar - 1), dst, y + POW2(Nvar - 1));
     ctaylor_rec<T, Nvar - 1>::multo(dst, y);
   }
   // dst = dst * (y - y[0])
-  static void multo_skipconst(T * dst, const T * y) {
+  void multo_skipconst(T * dst, const T * y) {
     ctaylor_rec<T, Nvar - 1>::multo_skipconst(dst + POW2(Nvar - 1), y);
     ctaylor_rec<T, Nvar - 1>::mul(dst + POW2(Nvar - 1), dst, y + POW2(Nvar - 1));
     ctaylor_rec<T, Nvar - 1>::multo_skipconst(dst, y);
   }
 
   // Evaluate the polynomial at x (an array of length Nvar)
-  static T eval(const T * ct, const T * x) {
+  T eval(const T * ct, const T * x) {
     return ctaylor_rec<T, Nvar - 1>::eval(ct, x) +
            x[Nvar - 1] * ctaylor_rec<T, Nvar - 1>::eval(ct + POW2(Nvar - 1), x);
   }
   /* Put sum_i coeff[i]*(x - x[0])^i in res,
      used when evaluating analytical functions of this */
-  static void compose(T * res, const T * x, const T coeff[]) {
+  void compose(T * res, const T * x, const T coeff[]) {
     res[0] = coeff[Nvar];
     for (int i = 1; i < POW2(Nvar); i++)
       res[i] = 0;
@@ -108,67 +108,67 @@ template <typename T, int Nvar> struct ctaylor_rec {
 };
 
 template <typename T> struct ctaylor_rec<T, 0> {
-  static void mul(T * dst, const T * x, const T * y) { dst[0] += x[0] * y[0]; }
-  static void mul_set(T * dst, const T * x, const T * y) { dst[0] = x[0] * y[0]; }
-  static void multo(T * dst, const T * y) { dst[0] *= y[0]; }
-  static void multo_skipconst(T * dst, const T * y) { dst[0] = 0; }
-  static T eval(const T * ct, const T * x) { return ct[0]; }
-  static void compose(T * res, const T * x, const T coeff[]) { res[0] = coeff[0]; }
+  void mul(T * dst, const T * x, const T * y) { dst[0] += x[0] * y[0]; }
+  void mul_set(T * dst, const T * x, const T * y) { dst[0] = x[0] * y[0]; }
+  void multo(T * dst, const T * y) { dst[0] *= y[0]; }
+  void multo_skipconst(T * dst, const T * y) { dst[0] = 0; }
+  T eval(const T * ct, const T * x) { return ct[0]; }
+  void compose(T * res, const T * x, const T coeff[]) { res[0] = coeff[0]; }
 };
 
 template <typename T> struct ctaylor_rec<T, 1> {
-  static void mul(T * dst, const T * x, const T * y) {
+  void mul(T * dst, const T * x, const T * y) {
     dst[0] += x[0] * y[0];
     dst[1] += x[0] * y[1] + x[1] * y[0];
   }
-  static void mul_set(T * dst, const T * x, const T * y) {
+  void mul_set(T * dst, const T * x, const T * y) {
     dst[0] = x[0] * y[0];
     dst[1] = x[0] * y[1] + x[1] * y[0];
   }
-  static void multo(T * dst, const T * y) {
+  void multo(T * dst, const T * y) {
     dst[1] = dst[1] * y[0] + dst[0] * y[1];
     dst[0] *= y[0];
   }
-  static void multo_skipconst(T * dst, const T * y) {
+  void multo_skipconst(T * dst, const T * y) {
     dst[1] = dst[0] * y[1];
     dst[0] = 0;
   }
-  static T eval(const T * ct, const T * x) { return ct[0] + x[0] * ct[1]; }
-  static void compose(T * res, const T * x, const T coeff[]) {
+  T eval(const T * ct, const T * x) { return ct[0] + x[0] * ct[1]; }
+  void compose(T * res, const T * x, const T coeff[]) {
     res[0] = coeff[0];
     res[1] = coeff[1] * x[1];
   }
 };
 
 template <typename T> struct ctaylor_rec<T, 2> {
-  static void mul(T * dst, const T * x, const T * y) {
+  void mul(T * dst, const T * x, const T * y) {
     dst[0] += x[0] * y[0];
     dst[1] += x[0] * y[1] + x[1] * y[0];
     dst[2] += x[0] * y[2] + x[2] * y[0];
     dst[3] += x[0] * y[3] + x[3] * y[0] + x[1] * y[2] + x[2] * y[1];
   }
-  static void mul_set(T * dst, const T * x, const T * y) {
+  void mul_set(T * dst, const T * x, const T * y) {
     dst[0] = x[0] * y[0];
     dst[1] = x[0] * y[1] + x[1] * y[0];
     dst[2] = x[0] * y[2] + x[2] * y[0];
     dst[3] = x[0] * y[3] + x[3] * y[0] + x[1] * y[2] + x[2] * y[1];
   }
-  static void multo(T * dst, const T * y) {
+  void multo(T * dst, const T * y) {
     dst[3] = dst[0] * y[3] + dst[3] * y[0] + dst[1] * y[2] + dst[2] * y[1];
     dst[2] = dst[0] * y[2] + dst[2] * y[0];
     dst[1] = dst[0] * y[1] + dst[1] * y[0];
     dst[0] = dst[0] * y[0];
   }
-  static void multo_skipconst(T * dst, const T * y) {
+  void multo_skipconst(T * dst, const T * y) {
     dst[3] = dst[0] * y[3] + dst[1] * y[2] + dst[2] * y[1];
     dst[2] = dst[0] * y[2];
     dst[1] = dst[0] * y[1];
     dst[0] = 0;
   }
-  static T eval(const T * ct, const T * x) {
+  T eval(const T * ct, const T * x) {
     return ct[0] + x[0] * ct[1] + x[1] * ct[2] + x[1] * x[0] * ct[3];
   }
-  static void compose(T * res, const T * x, const T coeff[]) {
+  void compose(T * res, const T * x, const T coeff[]) {
     res[0] = coeff[0];
     res[1] = coeff[1] * x[1];
     res[2] = coeff[1] * x[2];
@@ -382,8 +382,8 @@ template <typename T, int Nvar> struct ctaylor {
 };
 
 template <typename T, int Nvar>
-static ctaylor<T, Nvar> operator*(const ctaylor<T, Nvar> & t1,
-                                  const ctaylor<T, Nvar> & t2) {
+ctaylor<T, Nvar> operator*(const ctaylor<T, Nvar> & t1,
+                           const ctaylor<T, Nvar> & t2) {
   ctaylor<T, Nvar> tmp;
 #ifdef CTAYLOR_SPARSE
   if (t2.isscalar)
@@ -408,42 +408,42 @@ static ctaylor<T, Nvar> operator*(const ctaylor<T, Nvar> & t1,
 // coefficient. This makes the transition from numbers to
 // taylor objects easier.
 template <typename S, typename T, int Nvar>
-static bool operator<(const S & x, const ctaylor<T, Nvar> & t) {
+bool operator<(const S & x, const ctaylor<T, Nvar> & t) {
   return x < t.c[0];
 }
 
 template <typename S, typename T, int Nvar>
-static bool operator<(const ctaylor<T, Nvar> & t, const S & x) {
+bool operator<(const ctaylor<T, Nvar> & t, const S & x) {
   return t.c[0] < x;
 }
 
 template <typename T, int Nvar>
-static bool operator<(const ctaylor<T, Nvar> & t1, const ctaylor<T, Nvar> & t2) {
+bool operator<(const ctaylor<T, Nvar> & t1, const ctaylor<T, Nvar> & t2) {
   return t1.c[0] < t2.c[0];
 }
 
 template <typename S, typename T, int Nvar>
-static bool operator>(const S & x, const ctaylor<T, Nvar> & t) {
+bool operator>(const S & x, const ctaylor<T, Nvar> & t) {
   return x > t.c[0];
 }
 
 template <typename S, typename T, int Nvar>
-static bool operator>(const ctaylor<T, Nvar> & t, const S & x) {
+bool operator>(const ctaylor<T, Nvar> & t, const S & x) {
   return t.c[0] > x;
 }
 
 template <typename T, int Nvar>
-static bool operator>(const ctaylor<T, Nvar> & t1, const ctaylor<T, Nvar> & t2) {
+bool operator>(const ctaylor<T, Nvar> & t1, const ctaylor<T, Nvar> & t2) {
   return t1.c[0] > t2.c[0];
 }
 
 template <typename S, typename T, int Nvar>
-static bool operator!=(const ctaylor<T, Nvar> & t, const S & x) {
+bool operator!=(const ctaylor<T, Nvar> & t, const S & x) {
   return t.c[0] != x;
 }
 
 template <typename T, int Nvar, typename S>
-static ctaylor<T, Nvar> operator*(const S & x, const ctaylor<T, Nvar> & t) {
+ctaylor<T, Nvar> operator*(const S & x, const ctaylor<T, Nvar> & t) {
   ctaylor<T, Nvar> tmp;
 #ifdef CTAYLOR_SPARSE
   tmp.isscalar = t.isscalar;
@@ -460,7 +460,7 @@ static ctaylor<T, Nvar> operator*(const S & x, const ctaylor<T, Nvar> & t) {
 }
 
 template <typename T, int Nvar, typename S>
-static ctaylor<T, Nvar> operator*(const ctaylor<T, Nvar> & t, const S & x) {
+ctaylor<T, Nvar> operator*(const ctaylor<T, Nvar> & t, const S & x) {
   ctaylor<T, Nvar> tmp;
 #ifdef CTAYLOR_SPARSE
   tmp.isscalar = t.isscalar;
@@ -477,58 +477,58 @@ static ctaylor<T, Nvar> operator*(const ctaylor<T, Nvar> & t, const S & x) {
 }
 
 template <typename T, int Nvar, typename S>
-static ctaylor<T, Nvar> operator+(const S & x, const ctaylor<T, Nvar> & t) {
+ctaylor<T, Nvar> operator+(const S & x, const ctaylor<T, Nvar> & t) {
   ctaylor<T, Nvar> tmp = t;
   tmp.c[0] += x;
   return tmp;
 }
 
 template <typename T, int Nvar, typename S>
-static ctaylor<T, Nvar> operator+(const ctaylor<T, Nvar> & t, const S & x) {
+ctaylor<T, Nvar> operator+(const ctaylor<T, Nvar> & t, const S & x) {
   ctaylor<T, Nvar> tmp = t;
   tmp.c[0] += x;
   return tmp;
 }
 
 template <typename T, int Nvar>
-static ctaylor<T, Nvar> operator+(const ctaylor<T, Nvar> & t1,
-                                  const ctaylor<T, Nvar> & t2) {
+ctaylor<T, Nvar> operator+(const ctaylor<T, Nvar> & t1,
+                           const ctaylor<T, Nvar> & t2) {
   ctaylor<T, Nvar> tmp = t1;
   tmp += t2;
   return tmp;
 }
 
 template <typename T, int Nvar>
-static ctaylor<T, Nvar> operator-(const T & x, const ctaylor<T, Nvar> & t) {
+ctaylor<T, Nvar> operator-(const T & x, const ctaylor<T, Nvar> & t) {
   ctaylor<T, Nvar> tmp = -t;
   tmp.c[0] += x;
   return tmp;
 }
 
 template <typename T, int Nvar>
-static ctaylor<T, Nvar> operator-(const ctaylor<T, Nvar> & t, const T & x) {
+ctaylor<T, Nvar> operator-(const ctaylor<T, Nvar> & t, const T & x) {
   ctaylor<T, Nvar> tmp = t;
   tmp.c[0] -= x;
   return tmp;
 }
 
 template <typename T, int Nvar>
-static ctaylor<T, Nvar> operator-(int x, const ctaylor<T, Nvar> & t) {
+ctaylor<T, Nvar> operator-(int x, const ctaylor<T, Nvar> & t) {
   ctaylor<T, Nvar> tmp = -t;
   tmp.c[0] += x;
   return tmp;
 }
 
 template <typename T, int Nvar>
-static ctaylor<T, Nvar> operator-(const ctaylor<T, Nvar> & t, int x) {
+ctaylor<T, Nvar> operator-(const ctaylor<T, Nvar> & t, int x) {
   ctaylor<T, Nvar> tmp = t;
   tmp.c[0] -= x;
   return tmp;
 }
 
 template <typename T, int Nvar>
-static ctaylor<T, Nvar> operator-(const ctaylor<T, Nvar> & t1,
-                                  const ctaylor<T, Nvar> & t2) {
+ctaylor<T, Nvar> operator-(const ctaylor<T, Nvar> & t1,
+                           const ctaylor<T, Nvar> & t2) {
   ctaylor<T, Nvar> tmp = t1;
   tmp -= t2;
   return tmp;
@@ -541,8 +541,7 @@ static ctaylor<T, Nvar> operator-(const ctaylor<T, Nvar> & t1,
 #include <iostream>
 
 template <typename num, int Nvar>
-static std::ostream & operator<<(std::ostream & stream,
-                                 const ctaylor<num, Nvar> & t) {
+std::ostream & operator<<(std::ostream & stream, const ctaylor<num, Nvar> & t) {
   stream << "{" << t[0];
   for (int i = 1; i < POW2(Nvar); i++)
     stream << ", " << t[i];

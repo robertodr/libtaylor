@@ -29,7 +29,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 #include "tmath.hpp"
 
 template <typename T, int Nvar, typename S>
-static ctaylor<T, Nvar> operator/(const S & x, const ctaylor<T, Nvar> & t) {
+ctaylor<T, Nvar> operator/(const S & x, const ctaylor<T, Nvar> & t) {
   ctaylor<T, Nvar> res;
 #ifdef CTAYLOR_SPARSE
   res.isscalar = t.isscalar;
@@ -53,8 +53,8 @@ static ctaylor<T, Nvar> operator/(const S & x, const ctaylor<T, Nvar> & t) {
 }
 
 template <typename T, int Nvar>
-static ctaylor<T, Nvar> operator/(const ctaylor<T, Nvar> & t1,
-                                  const ctaylor<T, Nvar> & t2) {
+ctaylor<T, Nvar> operator/(const ctaylor<T, Nvar> & t1,
+                           const ctaylor<T, Nvar> & t2) {
   ctaylor<T, Nvar> res;
 #ifdef CTAYLOR_SPARSE
   if (t1.isscalar)
@@ -71,29 +71,27 @@ static ctaylor<T, Nvar> operator/(const ctaylor<T, Nvar> & t1,
 }
 
 template <typename T, int Nvar>
-static ctaylor<T, Nvar> operator/(const ctaylor<T, Nvar> & t, const T & x) {
+ctaylor<T, Nvar> operator/(const ctaylor<T, Nvar> & t, const T & x) {
   ctaylor<T, Nvar> tmp = t;
   tmp *= 1 / x;
   return tmp;
 }
 
 template <typename T, int Nvar, typename S>
-static ctaylor<T, Nvar> operator/(const ctaylor<T, Nvar> & t, const S & x) {
+ctaylor<T, Nvar> operator/(const ctaylor<T, Nvar> & t, const S & x) {
   ctaylor<T, Nvar> tmp = t;
   tmp *= 1 / T(x);
   return tmp;
 }
 
-template <typename T, int Nvar>
-static ctaylor<T, Nvar> abs(const ctaylor<T, Nvar> & t) {
+template <typename T, int Nvar> ctaylor<T, Nvar> abs(const ctaylor<T, Nvar> & t) {
   if (t.c[0] < 0)
     return -t;
   else
     return t;
 }
 
-template <typename T, int Nvar>
-static ctaylor<T, Nvar> exp(const ctaylor<T, Nvar> & t) {
+template <typename T, int Nvar> ctaylor<T, Nvar> exp(const ctaylor<T, Nvar> & t) {
 #ifdef CTAYLOR_SPARSE
   if (t.isscalar)
     return ctaylor<T, Nvar>(exp(t.c[0]));
@@ -106,8 +104,7 @@ static ctaylor<T, Nvar> exp(const ctaylor<T, Nvar> & t) {
 }
 
 // exp(x)-1, but accurate for small x
-template <typename T, int Nvar>
-static ctaylor<T, Nvar> expm1(const ctaylor<T, Nvar> & t) {
+template <typename T, int Nvar> ctaylor<T, Nvar> expm1(const ctaylor<T, Nvar> & t) {
 #ifdef CTAYLOR_SPARSE
   if (t.isscalar)
     return ctaylor<T, Nvar>(2 * exp(t.c[0] / 2) * sinh(t.c[0] / 2));
@@ -126,8 +123,7 @@ static ctaylor<T, Nvar> expm1(const ctaylor<T, Nvar> & t) {
   return res;
 }
 
-template <typename T, int Nvar>
-static ctaylor<T, Nvar> log(const ctaylor<T, Nvar> & t) {
+template <typename T, int Nvar> ctaylor<T, Nvar> log(const ctaylor<T, Nvar> & t) {
 #ifdef CTAYLOR_SPARSE
   if (t.isscalar)
     return ctaylor<T, Nvar>(log(t.c[0]));
@@ -142,7 +138,7 @@ static ctaylor<T, Nvar> log(const ctaylor<T, Nvar> & t) {
 // We need this version with double a argument to prevent truncation
 // to int.
 template <typename T, int Nvar>
-static ctaylor<T, Nvar> pow(const ctaylor<T, Nvar> & t, const double & a) {
+ctaylor<T, Nvar> pow(const ctaylor<T, Nvar> & t, const double & a) {
 #ifdef CTAYLOR_SPARSE
   if (t.isscalar)
     return ctaylor<T, Nvar>(pow(t.c[0], a));
@@ -155,8 +151,7 @@ static ctaylor<T, Nvar> pow(const ctaylor<T, Nvar> & t, const double & a) {
   return res;
 }
 
-template <typename T, int Nvar>
-static ctaylor<T, Nvar> sqrt(const ctaylor<T, Nvar> & t) {
+template <typename T, int Nvar> ctaylor<T, Nvar> sqrt(const ctaylor<T, Nvar> & t) {
 #ifdef CTAYLOR_SPARSE
   if (t.isscalar)
     return ctaylor<T, Nvar>(sqrt(t.c[0]));
@@ -169,8 +164,7 @@ static ctaylor<T, Nvar> sqrt(const ctaylor<T, Nvar> & t) {
   return res;
 }
 
-template <typename T, int Nvar>
-static ctaylor<T, Nvar> cbrt(const ctaylor<T, Nvar> & t) {
+template <typename T, int Nvar> ctaylor<T, Nvar> cbrt(const ctaylor<T, Nvar> & t) {
 #ifdef CTAYLOR_SPARSE
   if (t.isscalar)
     return ctaylor<T, Nvar>(cbrt(t.c[0]));
@@ -188,7 +182,7 @@ static ctaylor<T, Nvar> cbrt(const ctaylor<T, Nvar> & t) {
 // when the exponent is an integer, but does not force
 // conversion to integer.
 template <typename T, int Nvar>
-static ctaylor<T, Nvar> pow(const ctaylor<T, Nvar> & t, int n) {
+ctaylor<T, Nvar> pow(const ctaylor<T, Nvar> & t, int n) {
   if (n > 0) {
     ctaylor<T, Nvar> res = t;
     while (n-- > 1)
@@ -202,8 +196,7 @@ static ctaylor<T, Nvar> pow(const ctaylor<T, Nvar> & t, int n) {
   }
 }
 
-template <typename T, int Nvar>
-static ctaylor<T, Nvar> atan(const ctaylor<T, Nvar> & t) {
+template <typename T, int Nvar> ctaylor<T, Nvar> atan(const ctaylor<T, Nvar> & t) {
 #ifdef CTAYLOR_SPARSE
   if (t.isscalar)
     return ctaylor<T, Nvar>(atan(t.c[0]));
@@ -216,8 +209,7 @@ static ctaylor<T, Nvar> atan(const ctaylor<T, Nvar> & t) {
   return res;
 }
 
-template <typename T, int Nvar>
-static ctaylor<T, Nvar> erf(const ctaylor<T, Nvar> & t) {
+template <typename T, int Nvar> ctaylor<T, Nvar> erf(const ctaylor<T, Nvar> & t) {
 #ifdef CTAYLOR_SPARSE
   if (t.isscalar)
     return ctaylor<T, Nvar>(erf(t.c[0]));
@@ -230,8 +222,7 @@ static ctaylor<T, Nvar> erf(const ctaylor<T, Nvar> & t) {
   return res;
 }
 
-template <typename T, int Nvar>
-static ctaylor<T, Nvar> sin(const ctaylor<T, Nvar> & t) {
+template <typename T, int Nvar> ctaylor<T, Nvar> sin(const ctaylor<T, Nvar> & t) {
 #ifdef CTAYLOR_SPARSE
   if (t.isscalar)
     return ctaylor<T, Nvar>(sin(t.c[0]));
@@ -244,8 +235,7 @@ static ctaylor<T, Nvar> sin(const ctaylor<T, Nvar> & t) {
   return res;
 }
 
-template <typename T, int Nvar>
-static ctaylor<T, Nvar> cos(const ctaylor<T, Nvar> & t) {
+template <typename T, int Nvar> ctaylor<T, Nvar> cos(const ctaylor<T, Nvar> & t) {
 #ifdef CTAYLOR_SPARSE
   if (t.isscalar)
     return ctaylor<T, Nvar>(cos(t.c[0]));
@@ -258,8 +248,7 @@ static ctaylor<T, Nvar> cos(const ctaylor<T, Nvar> & t) {
   return res;
 }
 
-template <typename T, int Nvar>
-static ctaylor<T, Nvar> asin(const ctaylor<T, Nvar> & t) {
+template <typename T, int Nvar> ctaylor<T, Nvar> asin(const ctaylor<T, Nvar> & t) {
   T tmp[Nvar + 1];
   asin_expand<T, Nvar>(tmp, t.c[0]);
 
@@ -268,8 +257,7 @@ static ctaylor<T, Nvar> asin(const ctaylor<T, Nvar> & t) {
   return res;
 }
 
-template <typename T, int Nvar>
-static ctaylor<T, Nvar> acos(const ctaylor<T, Nvar> & t) {
+template <typename T, int Nvar> ctaylor<T, Nvar> acos(const ctaylor<T, Nvar> & t) {
   T tmp[Nvar + 1];
   acos_expand<T, Nvar>(tmp, t.c[0]);
 
@@ -278,8 +266,7 @@ static ctaylor<T, Nvar> acos(const ctaylor<T, Nvar> & t) {
   return res;
 }
 
-template <typename T, int Nvar>
-static ctaylor<T, Nvar> asinh(const ctaylor<T, Nvar> & t) {
+template <typename T, int Nvar> ctaylor<T, Nvar> asinh(const ctaylor<T, Nvar> & t) {
 #ifdef CTAYLOR_SPARSE
   if (t.isscalar)
     return ctaylor<T, Nvar>(asinh(t.c[0]));
@@ -298,7 +285,7 @@ static ctaylor<T, Nvar> asinh(const ctaylor<T, Nvar> & t) {
   small. This works less well but still ok in single precision.
  */
 template <typename T, int Nvar>
-static ctaylor<T, Nvar> sqrtx_asinh_sqrtx(const ctaylor<T, Nvar> & t) {
+ctaylor<T, Nvar> sqrtx_asinh_sqrtx(const ctaylor<T, Nvar> & t) {
   assert(t.c[0] > -0.5);
 #ifdef CTAYLOR_SPARSE
   if (t.isscalar) {
@@ -308,24 +295,24 @@ static ctaylor<T, Nvar> sqrtx_asinh_sqrtx(const ctaylor<T, Nvar> & t) {
 #endif
     // Coefficients of an [8,8] Pade approximation at x = 0
 #define ASINH_TABSIZE 9
-  static const T P[ASINH_TABSIZE] = {0,
-                                     3.510921856028398e3,
-                                     1.23624388373212e4,
-                                     1.734847003883674e4,
-                                     1.235072285222234e4,
-                                     4.691117148130619e3,
-                                     9.119186273274577e2,
-                                     7.815848629220836e1,
-                                     1.96088643023654e0};
-  static const T Q[ASINH_TABSIZE] = {3.510921856028398e3,
-                                     1.29475924799926e4,
-                                     1.924308297963337e4,
-                                     1.474357149568687e4,
-                                     6.176496729255528e3,
-                                     1.379806958043824e3,
-                                     1.471833349002349e2,
-                                     5.666278232986776e0,
-                                     2.865104054302032e-2};
+  const T P[ASINH_TABSIZE] = {0,
+                              3.510921856028398e3,
+                              1.23624388373212e4,
+                              1.734847003883674e4,
+                              1.235072285222234e4,
+                              4.691117148130619e3,
+                              9.119186273274577e2,
+                              7.815848629220836e1,
+                              1.96088643023654e0};
+  const T Q[ASINH_TABSIZE] = {3.510921856028398e3,
+                              1.29475924799926e4,
+                              1.924308297963337e4,
+                              1.474357149568687e4,
+                              6.176496729255528e3,
+                              1.379806958043824e3,
+                              1.471833349002349e2,
+                              5.666278232986776e0,
+                              2.865104054302032e-2};
   if (fabs(t.c[0]) < 0.5) {
     // Shift polys, divide and compose
     assert(Nvar < ASINH_TABSIZE);
@@ -350,7 +337,7 @@ static ctaylor<T, Nvar> sqrtx_asinh_sqrtx(const ctaylor<T, Nvar> & t) {
 }
 
 template <typename T, int Nvar>
-static ctaylor<T, Nvar> min(const ctaylor<T, Nvar> & a, const ctaylor<T, Nvar> & b) {
+ctaylor<T, Nvar> min(const ctaylor<T, Nvar> & a, const ctaylor<T, Nvar> & b) {
   if (a <= b)
     return a;
   else
@@ -358,7 +345,7 @@ static ctaylor<T, Nvar> min(const ctaylor<T, Nvar> & a, const ctaylor<T, Nvar> &
 }
 
 template <typename T, int Nvar>
-static ctaylor<T, Nvar> max(const ctaylor<T, Nvar> & a, const ctaylor<T, Nvar> & b) {
+ctaylor<T, Nvar> max(const ctaylor<T, Nvar> & a, const ctaylor<T, Nvar> & b) {
   if (a > b)
     return a;
   else
