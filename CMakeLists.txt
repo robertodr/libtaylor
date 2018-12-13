@@ -4,7 +4,7 @@ project(taylor
   VERSION 1.0.0
   )
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -22,6 +22,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
 enable_testing()
 
 add_subdirectory(tests)
+
+# <<< Compile example >>>
+add_executable(example example.cpp)
 
 # <<< Create a target >>> Install and export targets >>>
 
@@ -46,6 +49,7 @@ install(
     ctaylor_math.hpp
     polymul.hpp
     taylor.hpp
+    taylor_impl.hpp
     taylor_math.hpp
     tmath.hpp
   DESTINATION
