@@ -1,3 +1,7 @@
+# Prepare "Catch" library for other executables
+add_library(Catch INTERFACE)
+target_include_directories(Catch INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+
 add_executable(unittest_taylor ${CMAKE_CURRENT_SOURCE_DIR}/unittest_taylor.cpp)
 
 target_link_libraries(unittest_taylor
