@@ -23,9 +23,6 @@ enable_testing()
 
 add_subdirectory(tests)
 
-# <<< Compile example >>>
-add_executable(example example.cpp)
-
 # <<< Create a target >>> Install and export targets >>>
 
 add_library(taylor INTERFACE)
@@ -40,6 +37,10 @@ target_include_directories(taylor
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<INSTALL_INTERFACE:${INSTALL_INCLUDEDIR}>
   )
+
+# <<< Compile example >>>
+add_executable(example example.cpp)
+target_link_libraries(example PRIVATE taylor)
 
 # <<< Install header files >>>
 
